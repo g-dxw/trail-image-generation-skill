@@ -44,16 +44,11 @@ python3 scripts/route_intensity.py route.kmz
 
 ## 案例
 
-- [江津柏林之巅：环线山脊徒步](examples/jiangjin-bailin.md)
 - [武功山单日反穿：高山草甸线](examples/wugongshan.md)
 - [五台山：待填充的寺庙山脊案例](examples/wutaishan.md)
 - [南川下乐村：照片预筛选与路线强度](examples/nanchuan-xiale.md)
 
 ## 效果图预览
-
-### 江津柏林之巅
-
-![江津柏林之巅路线效果预览](examples/assets/jiangjin/route-preview.png)
 
 ### 五台山顺朝
 
