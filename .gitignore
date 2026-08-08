@@ -4,3 +4,4 @@ route-work/
 *.kmz
 *.gpx
 *.kml
+.DS_Store
