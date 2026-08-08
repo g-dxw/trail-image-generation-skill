@@ -47,6 +47,7 @@ python3 scripts/route_intensity.py route.kmz
 - [江津柏林之巅：环线山脊徒步](examples/jiangjin-bailin.md)
 - [武功山单日反穿：高山草甸线](examples/wugongshan.md)
 - [五台山：待填充的寺庙山脊案例](examples/wutaishan.md)
+- [南川下乐村：照片预筛选与路线强度](examples/nanchuan-xiale.md)
 
 ## 效果图预览
 
@@ -61,6 +62,10 @@ python3 scripts/route_intensity.py route.kmz
 ![五台山顺朝等高线与 SVG 点位参考](examples/assets/wutaishan/contour-reference.png)
 
 > 五台山 AI 图用于风格和构图预览；中文、编号和路线几何以 SVG 与后期排版层为准。武功山案例目前只有提示词骨架，待有实际生图结果后再补图。
+
+### 南川下乐村
+
+![南川下乐村路线效果预览](examples/assets/nanchuan/route-preview.png)
 
 案例只保留结构和提示词片段，不上传原始照片与轨迹包；使用时替换为自己的 GPX/KML/KMZ 和图片。
 
