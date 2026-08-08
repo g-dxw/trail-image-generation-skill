@@ -141,3 +141,6 @@ For overview-first cadence, generate and review the overview before compiling ta
 - If available, generate or edit using the current tool's supported path.
 - If unavailable, provide prompts and composition instructions; never claim that an image was generated.
 - Never silently switch to an external credentialed API or CLI fallback.
+# 多日徒步补充规则
+
+多日路线的每条独立提示词必须包含：`第几天`、`当天起点`、`当天终点/跨夜点`、`当天突出颜色`、`全局点位范围` 和 `其余路线的 inset 表现`。跨夜点必须在相邻两天重复出现，但编号和名称保持不变。
