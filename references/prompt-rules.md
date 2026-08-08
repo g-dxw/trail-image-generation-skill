@@ -6,6 +6,13 @@
 - 没有生图能力，或用户明确要使用其他生图模型时，只输出独立可用的提示词、参考图清单、构图要求和负面约束，不声称已生成图片。
 - 点位优先模式：先生成小尺寸打卡点图供用户判断；用户确认后跳过总览图，直接生成路线详图。
 
+## 强制几何层
+
+- 每条路线图提示词都必须引用路线 SVG，并明确要求保留 SVG 上的全部编号标注点。
+- 每条路线图提示词都必须引用等高线/海拔参考层；无 DEM 时写明“仅表达地形视觉，不代表实测高程”。
+- 标注点必须沿 SVG 原位置、原顺序、原编号显示，禁止遗漏、重排、镜像、旋转或移到路线外。
+- 若 SVG 标注点或等高线层未生成，流程阻断，先补齐参考资产。
+
 ## 1. Build prompts from the current route
 
 Never reuse screen directions, point counts, segment counts, aspect ratios, or styles from a previous route. Derive them from the approved review document and current image task.
@@ -20,6 +27,7 @@ For every image, specify:
 - real-photo frames versus AI-derived landmark scenes;
 - exact text, data, safety, supply, and seasonal information requested for this image;
 - negative constraints and an acceptance checklist.
+- mandatory geometry assets: the route SVG, its annotation points, and the contour/elevation layer.
 
 When route intensity is shown, use the confirmed `route_intensity.score` and `route_intensity.level`. Do not convert cave, wet surface, cliff exposure, construction status, or ladder use into the route-intensity value; keep them as separate safety text.
 
