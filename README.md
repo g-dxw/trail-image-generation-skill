@@ -42,11 +42,25 @@ python3 scripts/route_intensity.py route.kmz
 
 只有在用户确认后，才进入提示词编写或图片生成。
 
-## 两个案例
+## 案例
 
 - [江津柏林之巅：环线山脊徒步](examples/jiangjin-bailin.md)
 - [武功山单日反穿：高山草甸线](examples/wugongshan.md)
 - [五台山：待填充的寺庙山脊案例](examples/wutaishan.md)
+
+## 效果图预览
+
+### 江津柏林之巅
+
+![江津柏林之巅路线效果预览](examples/assets/jiangjin/route-preview.png)
+
+### 五台山顺朝
+
+![五台山顺朝 AI 总览效果图](examples/assets/wutaishan/ai-overview.png)
+
+![五台山顺朝等高线与 SVG 点位参考](examples/assets/wutaishan/contour-reference.png)
+
+> 五台山 AI 图用于风格和构图预览；中文、编号和路线几何以 SVG 与后期排版层为准。武功山案例目前只有提示词骨架，待有实际生图结果后再补图。
 
 案例只保留结构和提示词片段，不上传原始照片与轨迹包；使用时替换为自己的 GPX/KML/KMZ 和图片。
 

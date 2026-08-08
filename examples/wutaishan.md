@@ -1,5 +1,13 @@
 # 案例三：五台山
 
+## 效果图
+
+![五台山顺朝 AI 总览效果图](assets/wutaishan/ai-overview.png)
+
+![五台山顺朝等高线与 SVG 点位参考](assets/wutaishan/contour-reference.png)
+
+AI 图用于风格和构图预览；路线、编号和中文文字以 SVG 和后期排版层为准。
+
 本案例来自会话 `019fe1e1-0843-7793-b412-9a4a36a12a09` 的“五台山顺朝”路线资料。
 
 ## 输入概况
