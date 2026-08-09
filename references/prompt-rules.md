@@ -1,5 +1,7 @@
 # 生图提示词规则
 
+Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. Do not call an image-generation tool until the user separately authorizes generation with `全部确认，开始生图` or an equally explicit instruction.
+
 ## 执行能力与点位优先
 
 - 先检测当前 Agent 是否具备可调用的生图模型/工具，不根据 Agent 名称猜测能力。

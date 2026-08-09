@@ -5,7 +5,18 @@ description: 将 GPX、KML 或 KMZ 徒步/旅行轨迹转换为可核对的路�
 
 # 轨迹生图 Skill
 
-先读取原始轨迹，再按 `references/review-template.md` 创建核对单。用户确认打卡点后，使用 `route_to_svg.py --checkpoints-json` 生成带编号点位的最终 SVG，再使用 `generate_contour_reference.py` 生成等高线组合 SVG。用户回复“打卡点和标志性图片确认无误”后，才按 `references/prompt-rules.md` 编写提示词或生成图片。
+严格按以下门禁执行，不得合并、跳过或提前进入下一阶段：
+
+1. 按 `references/review-template.md` 输出基础信息，等待用户回复 `基础信息确认无误`。
+2. 输出打卡点和标志性主照片，等待用户回复 `打卡点和标志性图片确认无误`。
+3. 使用 `route_to_svg.py --checkpoints-json` 生成带全局编号点位的最终 SVG，再使用 `generate_contour_reference.py` 生成等高线组合 SVG。
+4. 把图片生成计划和画面规格追加到同一份核对单。
+5. 输出“生图所用基础信息摘要”，明确列出路线事实、每日分段、全局点位、图像任务、视觉规则、SVG、等高线、文案、安全和补给信息。
+6. 等待用户回复 `生图画面规格确认无误`。
+7. 按 `references/prompt-rules.md` 为每张图片生成一份独立提示词；此时仍不得调用生图工具。
+8. 只有用户明确回复 `全部确认，开始生图` 或同等明确授权后，才调用当前会话可用的生图工具。
+
+用户选择提示词模式并回复 `全部确认，只生成提示词` 时，在第 7 步交付提示词后停止。
 
 核心脚本：`inspect_kmz.py`、`route_to_svg.py`、`generate_contour_reference.py`、`detect_checkpoint_candidates.py`、`route_intensity.py`。
 
@@ -34,5 +45,7 @@ description: 将 GPX、KML 或 KMZ 徒步/旅行轨迹转换为可核对的路�
 1. 先锁定全局路线和天数切分。
 2. 再确认每日终点、跨夜点、补给和住宿。
 3. 再确认全局打卡点及主照片。
-4. 先生成总览提示词，再生成每日详图提示词。
-5. 如果采用 checkpoint-first，先生成当天关键点场景，再生成总览/详图。
+4. 生成 SVG 标注点和等高线参考。
+5. 输出总览图与每日详图计划、画面规格和生图基础信息摘要。
+6. 用户确认画面规格后，先生成总览提示词，再生成每日详图提示词。
+7. 获得最终生图授权后，再按已确认的生成节奏执行。
