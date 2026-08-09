@@ -22,6 +22,10 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("generate_contour_reference.py", content)
         self.assertIn("缺少点位", content)
 
+    def test_route_svg_avoids_backslash_inside_fstring_expression(self):
+        source = (SKILL_DIR / "scripts" / "route_to_svg.py").read_text(encoding="utf-8")
+        self.assertNotIn("{''.join(f'", source)
+
 
 if __name__ == "__main__":
     unittest.main()

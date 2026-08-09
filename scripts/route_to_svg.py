@@ -467,14 +467,19 @@ def main() -> None:
     }
     json_file.write_text(json.dumps(layout, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    segment_lines = "".join(
+        f'- 路段：{segment["name"]}（{segment["start_progress"] * 100:.1f}%—{segment["end_progress"] * 100:.1f}%）\n'
+        for segment in segments
+    )
+    route_type = "闭合路线" if closed else "开放路线"
     fragment = f'''# {source.stem}轨迹几何参考
 
 - SVG 文件：`{svg_file.name}`
 - 原始轨迹点：{len(projected)}
 - 简化后折点：{len(simplified_indices)}
-- 路线类型：{'闭合路线' if closed else '开放路线'}
+- 路线类型：{route_type}
 - 画布：{args.width}×{args.height}
-{''.join(f'- 路段：{segment["name"]}（{segment["start_progress"] * 100:.1f}%—{segment["end_progress"] * 100:.1f}%）\n' for segment in segments)}
+{segment_lines}
 
 ## 提示词中的轨迹约束
 
