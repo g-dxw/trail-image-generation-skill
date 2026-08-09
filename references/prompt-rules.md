@@ -1,6 +1,6 @@
 # 生图提示词规则
 
-Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. After delivering the prompts, ask the user to choose `直接生成完整效果图`, `生成视觉底图并后期叠加`, or `只保留提示词`. Do not infer model quality from its name and do not call an image-generation tool before the user chooses.
+Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. After delivering the prompts, ask the user to choose the current-session image tool, a configured relay, or prompt-only mode; then ask whether to generate a complete image or a background for deterministic overlay. The default requested model is `gpt-image-2`. Do not call or upload to an external provider before explicit confirmation.
 
 ## 执行能力与点位优先
 

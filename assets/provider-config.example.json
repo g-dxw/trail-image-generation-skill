@@ -1,0 +1,24 @@
+{
+  "default_model": "gpt-image-2",
+  "default_provider": "builtin",
+  "providers": {
+    "builtin": {
+      "type": "current_session",
+      "model": "gpt-image-2"
+    },
+    "my-relay": {
+      "type": "relay",
+      "enabled": false,
+      "base_url": "https://relay.example.com/v1",
+      "api_format": "openai-responses",
+      "model": "gpt-image-2",
+      "api_key_env": "TRAIL_IMAGE_RELAY_API_KEY",
+      "supports_reference_images": true,
+      "supports_image_editing": false,
+      "supports_streaming": true,
+      "result_format": "base64",
+      "timeout_seconds": 180,
+      "max_retries": 1
+    }
+  }
+}

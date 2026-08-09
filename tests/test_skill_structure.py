@@ -47,6 +47,14 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("不根据模型名称自动判断强弱", content)
         self.assertIn("不默认执行任何一种生成方式", content)
 
+    def test_provider_selection_defaults_to_image2_without_secret_storage(self):
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        example = (SKILL_DIR / "assets" / "provider-config.example.json").read_text(encoding="utf-8")
+        self.assertIn("gpt-image-2", content)
+        self.assertIn("使用已配置中转站", content)
+        self.assertIn('"api_key_env"', example)
+        self.assertNotIn('"api_key"', example)
+
     def test_route_svg_avoids_backslash_inside_fstring_expression(self):
         source = (SKILL_DIR / "scripts" / "route_to_svg.py").read_text(encoding="utf-8")
         self.assertNotIn("{''.join(f'", source)

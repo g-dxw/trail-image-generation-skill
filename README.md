@@ -37,6 +37,17 @@ python3 scripts/detect_checkpoint_candidates.py route.kmz --output route-work/ch
 python3 scripts/route_intensity.py route.kmz
 ```
 
+## 图像提供方配置
+
+默认模型为 `gpt-image-2`。默认优先使用当前会话可用的内置生图工具；如需连接自己的中转站，复制 `assets/provider-config.example.json` 到本地私有配置目录，填写地址和环境变量名称，再运行：
+
+```bash
+python3 scripts/provider_config.py validate ~/.config/trail-image-generation/providers.json
+python3 scripts/provider_config.py show ~/.config/trail-image-generation/providers.json --provider my-relay
+```
+
+密钥只通过环境变量传入，不能写入配置文件或提交到 GitHub。中转站调用前必须由用户确认目标地址、模型和上传素材。
+
 然后参考 `references/review-template.md` 创建 `<路线名>-路线核对.md`。确认短语为：
 
 > 打卡点和标志性图片确认无误
