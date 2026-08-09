@@ -55,6 +55,8 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("| 轨迹精度 | `精确轨迹/严格遵循轨迹`", self.default_content)
         self.assertIn("风格、数量、图中文字和轨迹精度确认无误", self.default_content)
         self.assertIn("默认只规划图01，共 1 张", self.default_content)
+        self.assertIn("Skill 不主动推荐或默认其中一种", self.default_content)
+        self.assertNotIn("优先选择“模型预留区域，后期添加正确文字”", self.default_content)
 
     def test_complete_prompt_requires_explicit_user_review(self):
         self.assertIn("逐张完整展示最终生图提示词", self.default_content)
