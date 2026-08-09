@@ -62,6 +62,13 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("原确认失效", self.default_content)
         self.assertIn("[TEXT_LOCK_BEGIN]", self.default_content)
 
+    def test_stage_four_is_a_persisted_document_gate(self):
+        self.assertIn("## 阶段四：图片生成计划与画面规格", self.default_content)
+        self.assertIn("same file", self.default_content)
+        self.assertIn("validate_stage4_review.py", self.default_content)
+        self.assertIn("逐图完整画面规格", self.default_content)
+        self.assertIn("A Markdown block shown only in chat does not satisfy this stage", self.default_content)
+
 
 if __name__ == "__main__":
     unittest.main()

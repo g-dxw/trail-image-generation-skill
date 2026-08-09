@@ -64,6 +64,9 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("图中文字", content)
         self.assertIn("轨迹精度", content)
         self.assertIn("不得生成独立提示词", content)
+        self.assertIn("聊天消息不能替代核对单文件", content)
+        self.assertIn("validate_stage4_review.py", content)
+        self.assertIn("核对单持久化合同", content)
 
     def test_prompt_review_gate_requires_complete_locked_prompts(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")

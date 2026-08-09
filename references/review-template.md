@@ -131,9 +131,20 @@ Choose exactly one primary photo per checkpoint. Add a supporting photo only whe
 
 Do not require scene attributes, function tags, supply fields, safety fields, full photo descriptions, or route-segment confirmation in the default stage. Record user-provided supply and safety facts directly for later prompt use.
 
-## 阶段三：图片生成计划与画面规格
+## 阶段四：图片生成计划与画面规格
 
 Only enter this stage after `打卡点和标志性图片确认无误` and after the final numbered route SVG has been generated. Append this stage to the existing review file; do not create a disconnected document.
+
+This is a file-persistence gate, not a chat-only response. Before asking for confirmation:
+
+1. Read the existing `<路线名称>-路线核对单.md` from disk.
+2. Preserve all confirmed earlier sections and corrections.
+3. Write sections 九 through 十四 into that same file with real values.
+4. Do not leave angle-bracket placeholders, blank cells, `待补充`, or references such as “见前文”.
+5. Re-read the saved file and run `python3 scripts/validate_stage4_review.py <核对单文件>`.
+6. Show the clickable file path and the complete saved stage-4 content to the user.
+
+If the review file is missing, reconstruct its confirmed earlier sections first. A Markdown block shown only in chat does not satisfy this stage.
 
 This is workflow stage 4. Before continuing, require explicit values for exactly these four core decisions:
 
@@ -145,6 +156,8 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 任一项未填写或存在歧义时，停在本阶段继续核对。
 
 ```markdown
+> 当前阶段：`image_plan_review / 图片生成计划核对中`
+
 ## 九、图片生成计划
 
 ### 第 4 阶段四个必确认项
@@ -158,11 +171,32 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 确认短语：`风格、数量、图中文字和轨迹精度确认无误`
 
-| 图片编号 | 图片名称 | 图片类型 | 展示范围 | 画面比例 |
-|---|---|---|---|---|
-| 图01 | `<名称>` | `<路线总览图>` | `<完整路线>` | `<比例>` |
+| 图片编号 | 图片名称 | 用途 | 图片类型 | 展示范围 | 画面比例 | 轨迹分段 | 包含点位 | 文字方式 |
+|---|---|---|---|---|---|---|---|---|
+| 图01 | `<名称>` | `<小红书封面/总览/详图等>` | `<路线总览图>` | `<完整路线>` | `<比例>` | `<0.0—1.0>` | `<全局编号及名称>` | `<模型生成/后期添加/无文字>` |
 
 默认只规划图01，共 1 张。只有用户明确要求增加时，才加入路段详图、点位场景图或信息说明图。详图继续使用全局点位编号。
+
+### 逐图完整画面规格
+
+每张图片都必须建立独立小节，不得只用上方一行表格代替：
+
+#### 图01 `<图片名称>`
+
+| 项目 | 完整设置 |
+|---|---|
+| 用途与目标 | `<发布平台、阅读场景、用户一眼应理解什么>` |
+| 画面比例与尺寸 | `<比例和建议像素>` |
+| 构图层级 | `<前景、中景、背景和留白>` |
+| 轨迹范围 | `<完整路线或精确进度范围>` |
+| P0 几何 | `<路线类型、方向、起终点、分段、inset、点位锚点>` |
+| P1 内容 | `<地标、文字、信息卡、背景和装饰>` |
+| 包含点位 | `<全局编号、名称和视觉方式>` |
+| 图片文字 | `<逐条完整列出，或明确无文字/全部后期添加>` |
+| 参考图角色 | `<绝对路径和 route_geometry/real_photo/ai_scene/style_reference>` |
+| 安全与补给 | `<本图显示内容或明确不显示>` |
+| 负面约束 | `<禁止的路线、点位、文字和画面错误>` |
+| 验收条件 | `<轨迹、点位、文字、地标、构图和清晰度>` |
 
 ## 十、统一视觉与轨迹规则
 
@@ -229,7 +263,9 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 ## 十四、生图规格确认
 
-请检查图片数量、范围、风格、比例、轨迹结构、点位主图、基础信息摘要和附加文案。如果信息没有问题，请回复：`生图画面规格确认无误`
+保存后校验命令：`python3 scripts/validate_stage4_review.py <路线名称>-路线核对单.md`
+
+只有校验通过后，才提供核对单文件路径并请用户检查图片数量、逐图完整规格、范围、风格、比例、轨迹结构、点位主图、基础信息摘要和附加文案。如果信息没有问题，请回复：`生图画面规格确认无误`
 
 ## 十五、执行方式
 
