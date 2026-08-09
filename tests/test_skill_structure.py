@@ -20,7 +20,9 @@ class SkillStructureTests(unittest.TestCase):
     def test_final_workflow_requires_numbered_route_svg(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("route_to_svg.py --checkpoints-json", content)
-        self.assertIn("SVG 路线骨架和其全部编号标注点", content)
+        self.assertIn("SVG 路线骨架、PNG 路线预览、布局 JSON 和其全部编号标注点", content)
+        self.assertIn("render_route_preview.py", content)
+        self.assertIn("PNG 路线预览", content)
         self.assertNotIn("generate_contour_reference.py", content)
 
     def test_workflow_keeps_prompt_and_image_generation_as_separate_gates(self):

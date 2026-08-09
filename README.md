@@ -15,7 +15,7 @@
 5. 让用户确认点位名称、顺序、主照片和标志性特征。
 6. 再生成总览图、每日详图或打卡点场景的提示词。
 
-路线 SVG 和 SVG 上的编号标注点是强制产物。默认不自动生成示意等高线；只有用户提供可靠地形数据并明确要求时才单独处理地形图层。
+路线 SVG、PNG 预览、布局 JSON 和编号标注点是强制产物。生图时优先使用 PNG 参考，SVG 用于编辑和最终叠加。默认不自动生成示意等高线。
 
 ## 目录
 
@@ -32,6 +32,7 @@ SKILL.md      可供 Codex/兼容 Agent 使用的技能说明
 ```bash
 python3 scripts/inspect_kmz.py route.kmz --output-dir route-work
 python3 scripts/route_to_svg.py route.kmz --output-dir route-work --width 900 --height 1200
+python3 scripts/render_route_preview.py route-work/route-轨迹布局.json --output route-work/route-轨迹预览.png
 python3 scripts/detect_checkpoint_candidates.py route.kmz --output route-work/checkpoints.json
 python3 scripts/route_intensity.py route.kmz
 ```
@@ -72,7 +73,7 @@ python3 scripts/route_intensity.py route.kmz
 - 没有图像生成能力时只交付提示词，不声称已生成图片。
 - 多日徒步使用全局编号和每日分段双重索引，跨夜节点在总览图和日详图中保持同名同号。
 - 每天的距离、爬升、补给、住宿和风险提示独立记录，不能用全程统计替代。
-- SVG 标注点属于硬性验收项：缺失时退回路线核对阶段。
+- SVG、PNG 预览和标注点属于硬性验收项：缺失时退回路线核对阶段。
 
 ## 测试
 

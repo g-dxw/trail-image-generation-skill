@@ -10,7 +10,8 @@ Only read and apply this file after the user has replied `生图画面规格确�
 
 ## 强制几何层
 
-- 每条路线图提示词都必须引用路线 SVG，并明确要求保留 SVG 上的全部编号标注点。
+- 每条路线图提示词都必须列出路线 SVG、PNG 预览和布局 JSON。向生图模型提交视觉参考时优先使用 PNG，不假设模型能解析 SVG。
+- SVG 用于编辑和最终确定性叠加，PNG 用于视觉参考，布局 JSON 用于校验点位锚点和路线拓扑。
 - 标注点必须沿 SVG 原位置、原顺序、原编号显示，禁止遗漏、重排、镜像、旋转或移到路线外。
 - 若 SVG 标注点未生成，流程阻断，先补齐参考资产。
 - 默认不要求或自动生成示意等高线。只有用户提供可靠地形数据并明确要求时，才把地形图层加入提示词。
@@ -29,7 +30,7 @@ For every image, specify:
 - real-photo frames versus AI-derived landmark scenes;
 - exact text, data, safety, supply, and seasonal information requested for this image;
 - negative constraints and an acceptance checklist.
-- mandatory geometry assets: the route SVG and its annotation points.
+- mandatory geometry assets: the route SVG, PNG preview, layout JSON, and annotation points.
 
 When route intensity is shown, use the confirmed `route_intensity.score` and `route_intensity.level`. Do not convert cave, wet surface, cliff exposure, construction status, or ladder use into the route-intensity value; keep them as separate safety text.
 
