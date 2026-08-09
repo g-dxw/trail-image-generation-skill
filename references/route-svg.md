@@ -7,6 +7,16 @@ Use `scripts/route_to_svg.py` to turn the selected track into a stable layout ar
 - `<路线>-轨迹骨架.svg`: deterministic route skeleton and checkpoint anchors.
 - `<路线>-轨迹布局.json`: normalized geometry, simplified point indices, track progress, and checkpoint anchors.
 - `<路线>-轨迹提示片段.md`: compact SVG/path reference suitable for the execution prompt.
+- `<路线>-轨迹等高线参考.svg`: mandatory combined reference produced by `generate_contour_reference.py` after numbered checkpoints are confirmed.
+
+After the final checkpoint JSON is ready, run:
+
+```bash
+python3 scripts/route_to_svg.py route.kmz --output-dir route-work --checkpoints-json checkpoints.json
+python3 scripts/generate_contour_reference.py route-work/route-轨迹布局.json route-work/route-轨迹骨架.svg
+```
+
+The contour generator fails by default when the layout has no numbered checkpoints. `--allow-no-checkpoints` is limited to early internal geometry previews and must not be used for final image-generation references.
 
 ## Simplification
 

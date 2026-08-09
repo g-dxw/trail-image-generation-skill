@@ -34,6 +34,7 @@ python3 scripts/inspect_kmz.py route.kmz --output-dir route-work
 python3 scripts/route_to_svg.py route.kmz --output-dir route-work --width 900 --height 1200
 python3 scripts/detect_checkpoint_candidates.py route.kmz --output route-work/checkpoints.json
 python3 scripts/route_intensity.py route.kmz
+python3 scripts/generate_contour_reference.py route-work/route-轨迹布局.json route-work/route-轨迹骨架.svg
 ```
 
 然后参考 `references/review-template.md` 创建 `<路线名>-路线核对.md`。确认短语为：
@@ -45,7 +46,7 @@ python3 scripts/route_intensity.py route.kmz
 ## 案例
 
 - [武功山单日反穿：高山草甸线](examples/wugongshan.md)
-- [五台山：待填充的寺庙山脊案例](examples/wutaishan.md)
+- [五台山顺朝：两天一夜大五朝台](examples/wutaishan.md)
 - [南川下乐村：照片预筛选与路线强度](examples/nanchuan-xiale.md)
 
 ## 效果图预览

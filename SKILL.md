@@ -1,19 +1,20 @@
 ---
-name: trail-image-generation
+name: trail-image-generation-skill
 description: 将 GPX、KML 或 KMZ 徒步/旅行轨迹转换为可核对的路线资料、打卡点方案和一致的生图提示词；先核对事实与点位，再执行图像生成。
 ---
 
 # 轨迹生图 Skill
 
-完整工作流与约束见 `README.md` 及 `references/`。执行时必须先读取原始轨迹、生成路线骨架、SVG 编号标注点和等高线/海拔参考层，再创建路线核对单；用户确认“打卡点和标志性图片确认无误”后，才编写最终提示词或生成图片。缺少 SVG 标注点或等高线层时，流程阻断。
+先读取原始轨迹，再按 `references/review-template.md` 创建核对单。用户确认打卡点后，使用 `route_to_svg.py --checkpoints-json` 生成带编号点位的最终 SVG，再使用 `generate_contour_reference.py` 生成等高线组合 SVG。用户回复“打卡点和标志性图片确认无误”后，才按 `references/prompt-rules.md` 编写提示词或生成图片。
 
-核心脚本：`inspect_kmz.py`、`route_to_svg.py`、`detect_checkpoint_candidates.py`、`route_intensity.py`。
+核心脚本：`inspect_kmz.py`、`route_to_svg.py`、`generate_contour_reference.py`、`detect_checkpoint_candidates.py`、`route_intensity.py`。
 
 ## 强制参考层
 
 - SVG 路线骨架和其全部编号标注点是最终生图的必备几何资产，必须可见、可核对、不得重排。
 - 等高线/海拔参考层也是必备资产；没有 DEM 时使用示意等高线，并明确标注“非实测高程”。
 - 最终提示词必须要求模型保留这两层；只能改变线宽、颜色和画风，不能遗漏、增补、镜像、旋转或移动标注点。
+- `generate_contour_reference.py` 默认要求布局 JSON 至少有一个编号点位。缺少点位时先完成核对并重新运行 `route_to_svg.py --checkpoints-json`。
 
 ## 多日徒步增强规则
 

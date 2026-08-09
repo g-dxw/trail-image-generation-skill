@@ -1,0 +1,4 @@
+interface:
+  display_name: "轨迹生图 Skill"
+  short_description: "核对徒步轨迹、照片和多日分段，生成带编号点位与等高线的路线图"
+  default_prompt: "使用 $trail-image-generation-skill 处理这个轨迹包：先核对基础信息、路线强度、每日分段、打卡点和主照片；确认后强制生成带全局编号点位的 SVG 与等高线参考层，再输出提示词或生成图片。"
