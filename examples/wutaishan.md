@@ -4,8 +4,6 @@
 
 ![五台山顺朝 AI 总览效果图](assets/wutaishan/ai-overview.png)
 
-![五台山顺朝等高线与 SVG 点位参考](assets/wutaishan/contour-reference.png)
-
 AI 图用于风格和构图预览；路线、编号和中文文字以 SVG 和后期排版层为准。
 
 本案例来自会话 `019fe1e1-0843-7793-b412-9a4a36a12a09` 的“五台山顺朝”路线资料。
@@ -41,7 +39,7 @@ python3 scripts/detect_checkpoint_candidates.py wutaishan.kmz --output route-wor
 
 ## 已生成的关联素材
 
-原会话中已产出路线骨架、等高线示意、登高线参考和总览 AI 预览。AI 预览中的中文和编号仍需以后期 SVG/排版层校正，不能把模型画出的文字当作事实来源。
+原会话中已产出路线骨架和总览 AI 预览。AI 预览中的中文和编号仍需以后期 SVG/排版层校正，不能把模型画出的文字当作事实来源。
 
 ## 需要确认后才能进入生图的内容
 

@@ -133,7 +133,7 @@ Do not require scene attributes, function tags, supply fields, safety fields, fu
 
 ## 阶段三：图片生成计划与画面规格
 
-Only enter this stage after `打卡点和标志性图片确认无误` and after the final numbered route SVG and contour reference have been generated. Append this stage to the existing review file; do not create a disconnected document.
+Only enter this stage after `打卡点和标志性图片确认无误` and after the final numbered route SVG has been generated. Append this stage to the existing review file; do not create a disconnected document.
 
 ```markdown
 ## 九、图片生成计划
@@ -193,7 +193,6 @@ Only enter this stage after `打卡点和标志性图片确认无误` and after 
 | 图片任务 | `<总览图、每日详图、点位场景图等>` |
 | 视觉与比例 | `<风格、主色、画面比例、用途>` |
 | 路线几何 | `<SVG 文件、标注点数量、方向、分段颜色>` |
-| 等高线参考 | `<文件、实测/示意、不可遮挡内容>` |
 | 地标与照片 | `<主图、AI 场景或原图框方式>` |
 | 文案信息 | `<标题、数据卡、图例、警告>` |
 | 补给与住宿 | `<已确认信息或无>` |
@@ -217,9 +216,13 @@ Only enter this stage after `打卡点和标志性图片确认无误` and after 
 
 打卡点优先模式是可选的：当点位场景或主图存在不确定性时，最终授权后先生成小尺寸点位图供用户判断；用户确认后按已批准的图片任务生成详图。是否包含或跳过总览图必须在图片生成计划中明确，不得由 Agent 临时决定。
 
-允许生图时回复：`全部确认，开始生图`
+提示词生成完成后，再从以下方式中选择：
 
-只需要提示词时回复：`全部确认，只生成提示词`
+1. `直接生成完整效果图`：当前模型直接尝试完整构图，后续可能需要修正路线、编号或中文。
+2. `生成视觉底图并后期叠加`：生成背景和地标视觉，再叠加确定性的 SVG、编号、中文和数据，推荐用于正式发布。
+3. `只保留提示词`：不调用生图工具。
+
+未选择前不得生图。
 ```
 
 ## 按需高级核对附录

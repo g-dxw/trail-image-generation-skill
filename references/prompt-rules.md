@@ -1,6 +1,6 @@
 # 生图提示词规则
 
-Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. Do not call an image-generation tool until the user separately authorizes generation with `全部确认，开始生图` or an equally explicit instruction.
+Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. After delivering the prompts, ask the user to choose `直接生成完整效果图`, `生成视觉底图并后期叠加`, or `只保留提示词`. Do not infer model quality from its name and do not call an image-generation tool before the user chooses.
 
 ## 执行能力与点位优先
 
@@ -11,9 +11,9 @@ Only read and apply this file after the user has replied `生图画面规格确�
 ## 强制几何层
 
 - 每条路线图提示词都必须引用路线 SVG，并明确要求保留 SVG 上的全部编号标注点。
-- 每条路线图提示词都必须引用等高线/海拔参考层；无 DEM 时写明“仅表达地形视觉，不代表实测高程”。
 - 标注点必须沿 SVG 原位置、原顺序、原编号显示，禁止遗漏、重排、镜像、旋转或移到路线外。
-- 若 SVG 标注点或等高线层未生成，流程阻断，先补齐参考资产。
+- 若 SVG 标注点未生成，流程阻断，先补齐参考资产。
+- 默认不要求或自动生成示意等高线。只有用户提供可靠地形数据并明确要求时，才把地形图层加入提示词。
 
 ## 1. Build prompts from the current route
 
@@ -29,7 +29,7 @@ For every image, specify:
 - real-photo frames versus AI-derived landmark scenes;
 - exact text, data, safety, supply, and seasonal information requested for this image;
 - negative constraints and an acceptance checklist.
-- mandatory geometry assets: the route SVG, its annotation points, and the contour/elevation layer.
+- mandatory geometry assets: the route SVG and its annotation points.
 
 When route intensity is shown, use the confirmed `route_intensity.score` and `route_intensity.level`. Do not convert cave, wet surface, cliff exposure, construction status, or ladder use into the route-intensity value; keep them as separate safety text.
 

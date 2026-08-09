@@ -15,7 +15,7 @@
 5. 让用户确认点位名称、顺序、主照片和标志性特征。
 6. 再生成总览图、每日详图或打卡点场景的提示词。
 
-路线 SVG、SVG 上的编号标注点和等高线/海拔参考层是强制产物。没有 DEM 时允许使用示意等高线，但必须明确其性质；缺少任一层不得进入最终生图。
+路线 SVG 和 SVG 上的编号标注点是强制产物。默认不自动生成示意等高线；只有用户提供可靠地形数据并明确要求时才单独处理地形图层。
 
 ## 目录
 
@@ -34,7 +34,6 @@ python3 scripts/inspect_kmz.py route.kmz --output-dir route-work
 python3 scripts/route_to_svg.py route.kmz --output-dir route-work --width 900 --height 1200
 python3 scripts/detect_checkpoint_candidates.py route.kmz --output route-work/checkpoints.json
 python3 scripts/route_intensity.py route.kmz
-python3 scripts/generate_contour_reference.py route-work/route-轨迹布局.json route-work/route-轨迹骨架.svg
 ```
 
 然后参考 `references/review-template.md` 创建 `<路线名>-路线核对.md`。确认短语为：
@@ -55,8 +54,6 @@ python3 scripts/generate_contour_reference.py route-work/route-轨迹布局.json
 
 ![五台山顺朝 AI 总览效果图](examples/assets/wutaishan/ai-overview.png)
 
-![五台山顺朝等高线与 SVG 点位参考](examples/assets/wutaishan/contour-reference.png)
-
 > 五台山 AI 图用于风格和构图预览；中文、编号和路线几何以 SVG 与后期排版层为准。武功山案例目前只有提示词骨架，待有实际生图结果后再补图。
 
 ### 南川下乐村
@@ -75,7 +72,7 @@ python3 scripts/generate_contour_reference.py route-work/route-轨迹布局.json
 - 没有图像生成能力时只交付提示词，不声称已生成图片。
 - 多日徒步使用全局编号和每日分段双重索引，跨夜节点在总览图和日详图中保持同名同号。
 - 每天的距离、爬升、补给、住宿和风险提示独立记录，不能用全程统计替代。
-- 等高线层与 SVG 标注点属于硬性验收项：缺任一项就退回提示词阶段。
+- SVG 标注点属于硬性验收项：缺失时退回路线核对阶段。
 
 ## 测试
 

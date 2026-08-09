@@ -33,13 +33,16 @@ class ReviewTemplateTests(unittest.TestCase):
 
     def test_checkpoint_first_scope_is_decided_in_plan(self):
         self.assertIn("是否包含或跳过总览图必须在图片生成计划中明确", self.default_content)
-        self.assertIn("全部确认，只生成提示词", self.default_content)
+        self.assertIn("直接生成完整效果图", self.default_content)
+        self.assertIn("生成视觉底图并后期叠加", self.default_content)
+        self.assertIn("只保留提示词", self.default_content)
+        self.assertIn("未选择前不得生图", self.default_content)
 
     def test_image_spec_stage_has_explicit_summary_and_confirmation_gate(self):
         self.assertIn("## 十三、生图所用基础信息摘要", self.default_content)
         self.assertIn("路线事实", self.default_content)
         self.assertIn("路线几何", self.default_content)
-        self.assertIn("等高线参考", self.default_content)
+        self.assertIn("路线几何", self.default_content)
         self.assertIn("必须在当前阶段把上述摘要实际展示给用户", self.default_content)
         self.assertIn("## 十四、生图规格确认", self.default_content)
         self.assertIn("生图画面规格确认无误", self.default_content)
