@@ -13,6 +13,10 @@ REQUIRED_HEADINGS = (
     "## 十、统一视觉与轨迹规则",
     "## 十一、点位视觉来源",
     "## 十二、文案与信息",
+    "### 路线文案调研（步骤 4.5）",
+    "#### 信息来源",
+    "#### 筛选后的路线信息",
+    "#### 更新后的逐图文字",
     "## 十三、生图所用基础信息摘要",
     "## 十四、生图规格确认",
 )
@@ -27,13 +31,38 @@ def validate(path: Path) -> list[str]:
     for heading in REQUIRED_HEADINGS:
         if heading not in content:
             errors.append(f"missing required heading: {heading}")
-    for field in ("画面风格", "生图数量", "图中文字", "轨迹精度", "P0", "P1", "route_geometry", "SVG", "PNG", "布局 JSON"):
+    for field in (
+        "画面风格",
+        "生图数量",
+        "图中文字",
+        "轨迹精度",
+        "P0",
+        "P1",
+        "route_geometry",
+        "SVG",
+        "PNG",
+        "布局 JSON",
+        "适合时间/季节",
+        "适合人群",
+        "不适合人群",
+        "装备建议",
+        "天气与路况风险",
+        "补给与饮水",
+        "交通或停车",
+        "通行限制/开放状态",
+        "环保与安全注意事项",
+        "查询日期",
+        "可信度",
+        "路线文案与注意事项确认无误",
+    ):
         if field not in content:
             errors.append(f"missing stage-4 field: {field}")
     if not re.search(r"\|\s*图\d+\s*\|", content):
         errors.append("no image task row found")
     if not re.search(r"####\s*图\d+", content):
         errors.append("no per-image complete specification found")
+    if not re.search(r"https?://", content) and "未找到可确认资料" not in content:
+        errors.append("route copy research has neither a source URL nor an explicit no-reliable-source result")
 
     placeholder_patterns = (
         r"<[^>]+>",

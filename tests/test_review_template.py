@@ -69,6 +69,13 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("逐图完整画面规格", self.default_content)
         self.assertIn("A Markdown block shown only in chat does not satisfy this stage", self.default_content)
 
+    def test_stage_four_requires_route_copy_research_before_summary(self):
+        self.assertIn("路线文案调研（步骤 4.5）", self.default_content)
+        self.assertIn("适合时间/季节", self.default_content)
+        self.assertIn("适合人群", self.default_content)
+        self.assertIn("注意事项", self.default_content)
+        self.assertIn("路线文案与注意事项确认无误", self.default_content)
+
 
 if __name__ == "__main__":
     unittest.main()

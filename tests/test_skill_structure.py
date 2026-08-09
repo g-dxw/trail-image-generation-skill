@@ -31,6 +31,7 @@ class SkillStructureTests(unittest.TestCase):
             "基础信息确认无误",
             "打卡点和标志性图片确认无误",
             "route_to_svg.py --checkpoints-json",
+            "路线文案与注意事项确认无误",
             "生图所用基础信息摘要",
             "生图画面规格确认无误",
             "为每张图片生成一份独立、完整、可直接调用的最终提示词",
@@ -67,6 +68,7 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("聊天消息不能替代核对单文件", content)
         self.assertIn("validate_stage4_review.py", content)
         self.assertIn("核对单持久化合同", content)
+        self.assertIn("路线文案与注意事项确认无误", content)
 
     def test_prompt_review_gate_requires_complete_locked_prompts(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")

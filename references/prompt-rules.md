@@ -72,6 +72,8 @@ Every image prompt must also contain the stage-4 text decision as a non-rewritab
 
 Copy confirmed wording exactly. Do not paraphrase, shorten, merge, translate, or reuse text assigned to another image. If the decision is `全部后期添加`, instruct the model to reserve the confirmed regions without rendering placeholder characters. If it is `无文字`, explicitly prohibit all decorative lettering and fake map labels.
 
+The text lock must incorporate the image-specific wording selected during step 4.5 route-copy research. Include confirmed short text for applicable items such as suitable season/time, suitable or unsuitable participants, equipment, weather/road risks, supply, access restrictions, and safety reminders. Do not automatically place source URLs, source IDs, confidence labels, or long research explanations in the image; keep those in the review document unless the user explicitly requests citations on the artwork. Never add a researched item to an image that the stage-4.5 table marked `否`.
+
 When route intensity is shown, use the confirmed `route_intensity.score` and `route_intensity.level`. Do not convert cave, wet surface, cliff exposure, construction status, or ladder use into the route-intensity value; keep them as separate safety text.
 
 ## 2. Route fidelity modes
