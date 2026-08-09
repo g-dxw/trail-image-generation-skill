@@ -47,6 +47,14 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("## 十四、生图规格确认", self.default_content)
         self.assertIn("生图画面规格确认无误", self.default_content)
 
+    def test_stage_four_requires_style_count_and_text(self):
+        self.assertIn("第 4 阶段三个必确认项", self.default_content)
+        self.assertIn("| 画面风格 |", self.default_content)
+        self.assertIn("| 生图数量 | `1 张`", self.default_content)
+        self.assertIn("| 图中文字 |", self.default_content)
+        self.assertIn("风格、数量和图中文字确认无误", self.default_content)
+        self.assertIn("默认只规划图01，共 1 张", self.default_content)
+
 
 if __name__ == "__main__":
     unittest.main()

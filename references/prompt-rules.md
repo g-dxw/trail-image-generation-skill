@@ -2,6 +2,8 @@
 
 Only read and apply this file after the user has replied `生图画面规格确认无误`. Generate prompts first. After delivering the prompts, ask the user to choose the current-session image tool, a configured relay, or prompt-only mode; then ask whether to generate a complete image or a background for deterministic overlay. The default requested model is `gpt-image-2`. Do not call or upload to an external provider before explicit confirmation.
 
+Do not compile prompts unless the stage-4 decisions `画面风格`, `生图数量`, and `图中文字` have been confirmed. Default image count is one. Create exactly the confirmed number of independent prompts.
+
 ## 执行能力与点位优先
 
 - 先检测当前 Agent 是否具备可调用的生图模型/工具，不根据 Agent 名称猜测能力。

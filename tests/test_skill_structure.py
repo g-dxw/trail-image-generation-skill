@@ -55,6 +55,14 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn('"api_key_env"', example)
         self.assertNotIn('"api_key"', example)
 
+    def test_stage_four_gate_is_mandatory(self):
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("画面风格", content)
+        self.assertIn("生图数量", content)
+        self.assertIn("默认 `1 张`", content)
+        self.assertIn("图中文字", content)
+        self.assertIn("不得生成独立提示词", content)
+
     def test_route_svg_avoids_backslash_inside_fstring_expression(self):
         source = (SKILL_DIR / "scripts" / "route_to_svg.py").read_text(encoding="utf-8")
         self.assertNotIn("{''.join(f'", source)

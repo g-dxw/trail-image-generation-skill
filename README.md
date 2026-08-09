@@ -54,6 +54,8 @@ python3 scripts/provider_config.py show ~/.config/trail-image-generation/provide
 
 只有在用户确认后，才进入提示词编写或图片生成。
 
+图片计划阶段必须先确认：画面风格、生图数量和图中文字。生图数量默认 1 张；未确认完整前不会生成最终提示词。
+
 ## 案例
 
 - [武功山单日反穿：高山草甸线](examples/wugongshan.md)

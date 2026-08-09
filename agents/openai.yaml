@@ -1,4 +1,4 @@
 interface:
   display_name: "轨迹生图 Skill"
   short_description: "核对徒步轨迹、照片和多日分段，生成带真实路线与编号点位的路线图"
-  default_prompt: "使用 $trail-image-generation-skill 处理这个轨迹包：依次完成基础信息确认、打卡点和主照片确认、SVG 与 PNG 路线参考生成、图片计划和画面规格、生图基础信息摘要、画面规格确认、独立提示词；默认模型 gpt-image-2，提示词完成后让用户选择当前会话生图、已配置中转站或只保留提示词，外部上传前必须确认。"
+  default_prompt: "使用 $trail-image-generation-skill 处理这个轨迹包：依次完成基础信息确认、打卡点和主照片确认、SVG 与 PNG 路线参考生成；第4阶段强制确认画面风格、生图数量（默认1张）和图中文字；之后才输出生图基础信息摘要、画面规格确认和独立提示词。默认模型 gpt-image-2，外部上传前必须确认。"
