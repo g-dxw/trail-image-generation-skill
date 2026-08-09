@@ -34,7 +34,7 @@ class ReviewTemplateTests(unittest.TestCase):
     def test_checkpoint_first_scope_is_decided_in_plan(self):
         self.assertIn("是否包含或跳过总览图必须在图片生成计划中明确", self.default_content)
         self.assertIn("直接生成完整效果图", self.default_content)
-        self.assertIn("生成视觉底图并后期叠加", self.default_content)
+        self.assertIn("不用 SVG 后期确定性叠加修正轨迹", self.default_content)
         self.assertIn("只保留提示词", self.default_content)
         self.assertIn("未选择前不得生图", self.default_content)
 
@@ -47,13 +47,20 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("## 十四、生图规格确认", self.default_content)
         self.assertIn("生图画面规格确认无误", self.default_content)
 
-    def test_stage_four_requires_style_count_and_text(self):
-        self.assertIn("第 4 阶段三个必确认项", self.default_content)
+    def test_stage_four_requires_style_count_text_and_fidelity(self):
+        self.assertIn("第 4 阶段四个必确认项", self.default_content)
         self.assertIn("| 画面风格 |", self.default_content)
         self.assertIn("| 生图数量 | `1 张`", self.default_content)
         self.assertIn("| 图中文字 |", self.default_content)
-        self.assertIn("风格、数量和图中文字确认无误", self.default_content)
+        self.assertIn("| 轨迹精度 | `精确轨迹/严格遵循轨迹`", self.default_content)
+        self.assertIn("风格、数量、图中文字和轨迹精度确认无误", self.default_content)
         self.assertIn("默认只规划图01，共 1 张", self.default_content)
+
+    def test_complete_prompt_requires_explicit_user_review(self):
+        self.assertIn("逐张完整展示最终生图提示词", self.default_content)
+        self.assertIn("生图提示词确认无误", self.default_content)
+        self.assertIn("原确认失效", self.default_content)
+        self.assertIn("[TEXT_LOCK_BEGIN]", self.default_content)
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ python3 scripts/route_to_svg.py route.kmz --output-dir route-work --checkpoints-
 python3 scripts/render_route_preview.py route-work/route-轨迹布局.json --output route-work/route-轨迹预览.png
 ```
 
-Use the PNG as the default image-generation reference. Keep the SVG for editing and deterministic overlay, and keep the JSON for anchor verification.
+Use the PNG as the highest-priority image-generation geometry reference. Keep the SVG and JSON for preflight and post-generation verification; this Skill does not rely on deterministic SVG post-overlay to correct a generated route.
 
 ## Simplification
 
@@ -32,7 +32,7 @@ Recommended target counts:
 
 - overview prompt reference: 30–80 points;
 - complicated loops or repeated turns: 80–150 points;
-- deterministic final overlay: use the original or lightly simplified route instead.
+- strict generation reference: use enough points to retain every visually important bend and all forced anchors.
 
 If simplification removes a visually important bend, increase `--target-points` or add its progress to the checkpoint JSON.
 
@@ -44,7 +44,7 @@ Prefer this order:
 2. Include the compact `path d` signature from the prompt fragment as supporting text.
 3. Include a short natural-language description of route type, start/finish relation, direction, and major turns.
 
-Do not assume that a generative model will execute SVG code like a browser. The SVG code improves structure guidance but does not guarantee pixel-accurate reproduction. For stable final output, composite the deterministic route layer over the generated background.
+Do not assume that a generative model will execute SVG code like a browser. The SVG code improves structure guidance but does not guarantee pixel-accurate reproduction. Use the route PNG in the actual reference-image payload, retain the geometry lock verbatim, and reject route-drifted outputs during acceptance.
 
 ## Checkpoint anchoring
 

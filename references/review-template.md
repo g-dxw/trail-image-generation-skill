@@ -135,26 +135,28 @@ Do not require scene attributes, function tags, supply fields, safety fields, fu
 
 Only enter this stage after `打卡点和标志性图片确认无误` and after the final numbered route SVG has been generated. Append this stage to the existing review file; do not create a disconnected document.
 
-This is workflow stage 4. Before continuing, require explicit values for exactly these three core decisions:
+This is workflow stage 4. Before continuing, require explicit values for exactly these four core decisions:
 
 1. `画面风格`：写出可执行的风格描述，不能只写“好看”“高级”。
 2. `生图数量`：默认 `1 张`；只有用户明确要求时才增加。
-3. `图中文字`：列出需要出现的全部文字，并区分模型生成、后期添加或无文字。
+3. `图中文字`：按图片逐张列出需要出现的全部文字，并区分模型生成、后期添加或无文字。确认内容必须在第 7 阶段逐项原样进入对应图片的提示词，不得只保留在核对单中。
+4. `轨迹精度`：默认 `精确轨迹/严格遵循轨迹`。只有用户明确要求时才可改为 `结构相似` 或 `氛围自由`；风格词和“直接生成完整效果图”都不构成降级授权。
 
 任一项未填写或存在歧义时，停在本阶段继续核对。
 
 ```markdown
 ## 九、图片生成计划
 
-### 第 4 阶段三个必确认项
+### 第 4 阶段四个必确认项
 
 | 必确认项 | 当前设置 | 状态 |
 |---|---|---|
 | 画面风格 | `<具体风格、媒介、色彩和氛围>` | `<待确认/已确认>` |
 | 生图数量 | `1 张` | `<待确认/已确认>` |
 | 图中文字 | `<逐条列出文字；或“无文字”；或“全部后期添加”>` | `<待确认/已确认>` |
+| 轨迹精度 | `精确轨迹/严格遵循轨迹` | `<待确认/已确认>` |
 
-确认短语：`风格、数量和图中文字确认无误`
+确认短语：`风格、数量、图中文字和轨迹精度确认无误`
 
 | 图片编号 | 图片名称 | 图片类型 | 展示范围 | 画面比例 |
 |---|---|---|---|---|
@@ -170,7 +172,7 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 | 主色调 | `<颜色>` |
 | 路段颜色 | `<颜色规则>` |
 | 中文文字方式 | `<模型生成/后期添加>` |
-| 轨迹保真程度 | `<氛围自由/结构相似/精确轨迹>` |
+| 轨迹保真程度 | `精确轨迹/严格遵循轨迹（默认；仅用户明确要求时降级）` |
 | 是否显示方向箭头 | `<是/否>` |
 | 是否允许旋转 | `<是/否>` |
 | 是否允许镜像 | `<是/否>` |
@@ -201,9 +203,11 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 图中文字必须逐项核对。对于中文准确性要求较高的成品，优先选择“模型预留区域，后期添加正确文字”。不得让模型自行补充未经确认的标题、地名、距离、海拔或警告。
 
+每张图片应使用独立文字清单，后续提示词必须包含完整的 `[TEXT_LOCK_BEGIN]` 区块。共享标题可在多张图中重复，但不能把仅属于某张图的文案自动复制到其他图片。
+
 ## 十三、生图所用基础信息摘要
 
-只有收到 `风格、数量和图中文字确认无误` 后，才进入本摘要。在请求确认前，必须完整展示本轮提示词将使用的内容：
+只有收到 `风格、数量、图中文字和轨迹精度确认无误` 后，才进入本摘要。在请求确认前，必须完整展示本轮提示词将使用的内容：
 
 | 类别 | 已确认内容 |
 |---|---|
@@ -213,6 +217,8 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 | 图片任务 | `<总览图、每日详图、点位场景图等>` |
 | 视觉与比例 | `<风格、主色、画面比例、用途>` |
 | 路线几何 | `<SVG 文件、PNG 预览、布局 JSON、标注点数量、方向、分段颜色>` |
+| 轨迹精度与优先级 | `<精确轨迹/结构相似/氛围自由；P0 几何和 P1 视觉内容>` |
+| 参考图角色 | `<逐项列出 route_geometry/real_photo/ai_scene/style_reference>` |
 | 地标与照片 | `<主图、AI 场景或原图框方式>` |
 | 文案信息 | `<标题、数据卡、图例、警告>` |
 | 补给与住宿 | `<已确认信息或无>` |
@@ -226,6 +232,12 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 请检查图片数量、范围、风格、比例、轨迹结构、点位主图、基础信息摘要和附加文案。如果信息没有问题，请回复：`生图画面规格确认无误`
 
 ## 十五、执行方式
+
+进入执行方式前，必须先逐张完整展示最终生图提示词。不得只展示摘要、提示词片段或共享计划。请用户逐张核对轨迹约束、图片文字、地标、文案、构图、参考图角色、负面约束和验收条件。
+
+提示词确认短语：`生图提示词确认无误`
+
+任何提示词发生修改后，原确认失效，必须重新展示完整正文并再次确认。
 
 | 项目 | 设置 |
 |---|---|
@@ -242,10 +254,7 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 2. `使用已配置中转站`：调用前显示地址、模型、格式和上传清单，并再次确认。
 3. `只保留提示词`：不调用生图工具。
 
-选择提供方后，再选择：
-
-- `直接生成完整效果图`
-- `生成视觉底图并后期叠加`
+选择提供方后，使用 `直接生成完整效果图`。该方式继承已确认的轨迹精度，不会自动降级。本 Skill 不用 SVG 后期确定性叠加修正轨迹；正式调用前必须生成并校验执行清单，确保轨迹 PNG 实际作为 `route_geometry` 参考图传入。
 
 未选择前不得生图。
 ```

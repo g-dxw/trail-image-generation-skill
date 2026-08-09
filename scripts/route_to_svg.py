@@ -325,6 +325,25 @@ def arrow_svg(points: list[tuple[float, float]], color: str) -> str:
     return f'<polygon points="{tip[0]:.1f},{tip[1]:.1f} {left[0]:.1f},{left[1]:.1f} {right[0]:.1f},{right[1]:.1f}" fill="{html.escape(color)}" stroke="#fffdf7" stroke-width="2"/>'
 
 
+def checkpoint_badge_positions(checkpoints: list[dict], width: int, height: int) -> list[tuple[float, float]]:
+    positions: list[tuple[float, float]] = []
+    offsets = ((0, 0), (34, 0), (-34, 0), (0, 34), (0, -34), (28, 28), (-28, 28), (28, -28), (-28, -28))
+    minimum_distance_sq = 32 * 32
+    for checkpoint in checkpoints:
+        anchor = checkpoint["anchor"]
+        anchor_x, anchor_y = float(anchor["x"]), float(anchor["y"])
+        selected = (anchor_x, anchor_y)
+        for offset_x, offset_y in offsets:
+            candidate = (anchor_x + offset_x, anchor_y + offset_y)
+            if not (18 <= candidate[0] < width - 18 and 18 <= candidate[1] < height - 18):
+                continue
+            if all((candidate[0] - x) ** 2 + (candidate[1] - y) ** 2 >= minimum_distance_sq for x, y in positions):
+                selected = candidate
+                break
+        positions.append(selected)
+    return positions
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("route", type=Path)
@@ -397,12 +416,19 @@ def main() -> None:
     prompt_file = prefix.with_name(f"{source.stem}-轨迹提示片段.md")
 
     checkpoint_svg = []
-    for checkpoint in checkpoints:
+    badge_positions = checkpoint_badge_positions(checkpoints, args.width, args.height)
+    for checkpoint, (badge_x, badge_y) in zip(checkpoints, badge_positions):
         anchor = checkpoint["anchor"]
         label = html.escape(str(checkpoint["number"]))
+        if (badge_x, badge_y) != (anchor["x"], anchor["y"]):
+            checkpoint_svg.append(
+                f'<line x1="{anchor["x"]}" y1="{anchor["y"]}" x2="{badge_x}" y2="{badge_y}" stroke="#ffffff" stroke-width="6"/>'
+                f'<line x1="{anchor["x"]}" y1="{anchor["y"]}" x2="{badge_x}" y2="{badge_y}" stroke="#c62828" stroke-width="2"/>'
+                f'<circle cx="{anchor["x"]}" cy="{anchor["y"]}" r="4" fill="#c62828" stroke="#ffffff" stroke-width="2"/>'
+            )
         checkpoint_svg.append(
-            f'<circle cx="{anchor["x"]}" cy="{anchor["y"]}" r="8" fill="#ffffff" stroke="#c62828" stroke-width="4"/>'
-            f'<text x="{anchor["x"]}" y="{anchor["y"] + 4}" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#7f0000">{label}</text>'
+            f'<circle cx="{badge_x}" cy="{badge_y}" r="14" fill="#ffffff" stroke="#c62828" stroke-width="4"/>'
+            f'<text x="{badge_x}" y="{badge_y + 5}" text-anchor="middle" font-size="16" font-family="sans-serif" font-weight="700" fill="#690000" stroke="#ffffff" stroke-width="2.5" paint-order="stroke">{label}</text>'
         )
     boundary_svg = []
     for boundary in boundaries:
@@ -460,6 +486,7 @@ def main() -> None:
         "canvas": {"width": args.width, "height": args.height, "padding": args.padding},
         "simplified_original_indices": simplified_indices,
         "simplified_points": [{"x": x, "y": y} for x, y in canvas_simplified],
+        "simplified_progress": [round(cumulative[index] / cumulative[-1], 8) for index in simplified_indices],
         "svg_path_d": route_path,
         "checkpoints": checkpoints,
         "boundaries": boundaries,
@@ -483,7 +510,7 @@ def main() -> None:
 
 ## 提示词中的轨迹约束
 
-将 `{svg_file.name}` 作为路线几何参考，只参考轨迹轮廓、主要转折、行进顺序和编号锚点。允许水彩化线条，但不得镜像、非等比拉伸、改变路线类型或调换打卡点顺序。
+将 `{svg_file.name}` 及其 PNG 预览作为 P0 最高优先级路线几何参考。严格保留完整轨迹轮廓、全部主要转折、行进顺序、起终点、分段边界和编号锚点。允许水彩化线条，但不得重画、简化、镜像、旋转、非等比拉伸、改变路线类型或调换打卡点顺序；冲突时移动或缩小文字、地标和装饰。
 
 精简 SVG path：
 

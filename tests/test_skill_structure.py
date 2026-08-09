@@ -33,8 +33,9 @@ class SkillStructureTests(unittest.TestCase):
             "route_to_svg.py --checkpoints-json",
             "生图所用基础信息摘要",
             "生图画面规格确认无误",
-            "为每张图片生成一份独立提示词",
-            "提示词交付后展示生成方式选择",
+            "为每张图片生成一份独立、完整、可直接调用的最终提示词",
+            "生图提示词确认无误",
+            "提示词确认后展示生成方式选择",
         ]
         positions = [content.index(value) for value in expected]
         self.assertEqual(positions, sorted(positions))
@@ -42,7 +43,7 @@ class SkillStructureTests(unittest.TestCase):
     def test_prompt_completion_requires_user_selected_generation_mode(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("直接生成完整效果图", content)
-        self.assertIn("生成视觉底图并后期叠加", content)
+        self.assertIn("不使用 SVG 后期确定性叠加", content)
         self.assertIn("只保留提示词", content)
         self.assertIn("不根据模型名称自动判断强弱", content)
         self.assertIn("不默认执行任何一种生成方式", content)
@@ -61,7 +62,17 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("生图数量", content)
         self.assertIn("默认 `1 张`", content)
         self.assertIn("图中文字", content)
+        self.assertIn("轨迹精度", content)
         self.assertIn("不得生成独立提示词", content)
+
+    def test_prompt_review_gate_requires_complete_locked_prompts(self):
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        rules = (SKILL_DIR / "references" / "prompt-rules.md").read_text(encoding="utf-8")
+        self.assertIn("生图提示词确认无误", content)
+        self.assertIn("不得使用“同上”", content)
+        self.assertIn("[GEOMETRY_LOCK_BEGIN]", rules)
+        self.assertIn("[TEXT_LOCK_BEGIN]", rules)
+        self.assertIn("验收清单：", rules)
 
     def test_route_svg_avoids_backslash_inside_fstring_expression(self):
         source = (SKILL_DIR / "scripts" / "route_to_svg.py").read_text(encoding="utf-8")
