@@ -10,7 +10,7 @@
 
 它尤其适合路线海报、旅行纪念图、户外攻略图、多日行程总览，以及需要尽量保持真实轨迹形状的 AI 图片任务。
 
-![五台山顺朝路线图示例](examples/assets/wutaishan/ai-overview.png)
+![重庆南山十二峰无连线路线总览](examples/assets/nanshan-twelve-peaks/ai-overview-no-connectors.png)
 
 ## 为什么需要它
 
@@ -202,26 +202,13 @@ python3 scripts/provider_config.py validate \
 
 ## 案例
 
-### 五台山顺朝 · 多日路线总览
-
-展示两天一夜路线、全局编号、每日分段与跨夜节点的组织方式。
-
-[查看案例说明](examples/wutaishan.md)
-
-![五台山顺朝 AI 总览效果图](examples/assets/wutaishan/ai-overview.png)
-
 ### 重庆南山十二峰 · 无连线点位对应
 
 在相同轨迹和 12 个点位下，无连线构图比引导连线更干净，也减少了重复锚点和错误对应。因此 Skill 默认使用相同编号、名称和邻近排版建立关系。
 
 [查看案例说明](examples/nanshan-twelve-peaks.md)
 
-![Nanshan Twelve Peaks English route overview with preserved landmark inscriptions](examples/assets/nanshan-twelve-peaks/ai-overview-en-preserved-inscriptions.png)
-
-### 更多案例
-
-- [武功山单日反穿：高山草甸线](examples/wugongshan.md)
-- [南川下乐村：照片预筛选与路线强度](examples/nanchuan-xiale.md)
+![南山十二峰无连线路线总览](examples/assets/nanshan-twelve-peaks/ai-overview-no-connectors.png)
 
 > 案例展示的是工作流和约束方式，不代表生成模型可以实现像素级轨迹复刻。模型返回成功也不等于路线验收通过。
 
