@@ -6,6 +6,8 @@
 
 这是用户在同一套轨迹、点位、地标、文字和背景条件下，对比“无连线”和“有连线”两个版本后确认的优选方案。效果图由模型直接渲染中文；它是一次真实生成结果，不是确定性地图制图输出。
 
+![Nanshan Twelve Peaks English route overview with preserved landmark inscriptions](assets/nanshan-twelve-peaks/ai-overview-en-preserved-inscriptions.png)
+
 ## 输入概况
 
 - 路线类型：重庆南山单日开放式穿越线

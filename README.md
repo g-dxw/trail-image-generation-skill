@@ -216,7 +216,7 @@ python3 scripts/provider_config.py validate \
 
 [查看案例说明](examples/nanshan-twelve-peaks.md)
 
-![南山十二峰无连线路线总览](examples/assets/nanshan-twelve-peaks/ai-overview-no-connectors.png)
+![Nanshan Twelve Peaks English route overview with preserved landmark inscriptions](examples/assets/nanshan-twelve-peaks/ai-overview-en-preserved-inscriptions.png)
 
 ### 更多案例
 
