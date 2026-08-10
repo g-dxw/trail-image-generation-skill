@@ -12,7 +12,8 @@ Use `scripts/route_to_svg.py` to turn the selected track into a stable layout ar
 After the final checkpoint JSON is ready, run:
 
 ```bash
-python3 scripts/route_to_svg.py route.kmz --output-dir route-work --checkpoints-json checkpoints.json
+python3 scripts/route_to_svg.py route.kmz --output-dir route-work --checkpoints-json checkpoints.json \
+  --start-label "已确认起点名称" --finish-label "已确认终点名称"
 python3 scripts/render_route_preview.py route-work/route-轨迹布局.json --output route-work/route-轨迹预览.png
 ```
 
@@ -22,7 +23,7 @@ Use the PNG as the highest-priority image-generation geometry reference. Keep th
 
 Use Douglas–Peucker simplification with a target point count rather than copying every recorded sample. Preserve:
 
-- start and finish;
+- start and finish roles and confirmed names in the SVG, PNG preview, and layout JSON;
 - route extrema;
 - one far anchor for closed loops;
 - confirmed checkpoint progress positions;

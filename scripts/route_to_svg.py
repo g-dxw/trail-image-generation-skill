@@ -190,10 +190,12 @@ def parse_progress(raw_progress: object) -> float:
     return max(0.0, min(1.0, progress))
 
 
-def load_route_spec(path: Path | None, cumulative: list[float]) -> tuple[list[dict], list[dict], list[dict], set[int]]:
+def load_route_spec(path: Path | None, cumulative: list[float]) -> tuple[list[dict], list[dict], list[dict], set[int], dict]:
     if path is None:
-        return [], [], [], set()
+        return [], [], [], set(), {"start": {"name": "起点"}, "finish": {"name": "终点"}}
     payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        payload = {"checkpoints": payload}
     checkpoints = payload.get("checkpoints", payload if isinstance(payload, list) else [])
     checkpoint_result = []
     boundary_result = []
@@ -250,7 +252,29 @@ def load_route_spec(path: Path | None, cumulative: list[float]) -> tuple[list[di
                 "end_track_point_index": end_index,
             }
         )
-    return checkpoint_result, boundary_result, segment_result, forced
+    start_spec = payload.get("start") if isinstance(payload.get("start"), dict) else {}
+    finish_spec = payload.get("finish") if isinstance(payload.get("finish"), dict) else {}
+    endpoints = {
+        "start": {"name": str(start_spec.get("name") or payload.get("start_name") or "起点")},
+        "finish": {"name": str(finish_spec.get("name") or payload.get("finish_name") or "终点")},
+    }
+    return checkpoint_result, boundary_result, segment_result, forced, endpoints
+
+
+def endpoint_label_svg(role: str, name: str, x: float, y: float, width: int) -> str:
+    is_start = role == "start"
+    role_label = "起点" if is_start else "终点"
+    color = "#2e7d32" if is_start else "#c62828"
+    label = html.escape(f"{role_label}：{name}")
+    place_left = x >= width / 2
+    label_x = x - 18 if place_left else x + 18
+    text_anchor = "end" if place_left else "start"
+    return (
+        f'<line x1="{x}" y1="{y}" x2="{label_x}" y2="{y}" stroke="#ffffff" stroke-width="6"/>'
+        f'<line x1="{x}" y1="{y}" x2="{label_x}" y2="{y}" stroke="{color}" stroke-width="2"/>'
+        f'<text x="{label_x}" y="{y - 10}" text-anchor="{text_anchor}" font-size="17" font-family="sans-serif" '
+        f'font-weight="700" fill="{color}" stroke="#fffdf7" stroke-width="5" paint-order="stroke">{label}</text>'
+    )
 
 
 def detect_closed(points: list[tuple[float, float]], mode: str, threshold_m: float) -> bool:
@@ -356,6 +380,8 @@ def main() -> None:
     parser.add_argument("--closed", choices=("auto", "yes", "no"), default="auto")
     parser.add_argument("--loop-threshold-m", type=float, default=100.0)
     parser.add_argument("--checkpoints-json", type=Path)
+    parser.add_argument("--start-label", help="Confirmed start name; overrides the route specification")
+    parser.add_argument("--finish-label", help="Confirmed finish name; overrides the route specification")
     args = parser.parse_args()
 
     source = args.route.resolve()
@@ -369,7 +395,11 @@ def main() -> None:
     geographic = tracks[selected_index]
     projected = project(geographic)
     cumulative = cumulative_distances(projected)
-    checkpoints, boundaries, segments, specification_forced = load_route_spec(args.checkpoints_json, cumulative)
+    checkpoints, boundaries, segments, specification_forced, endpoints = load_route_spec(args.checkpoints_json, cumulative)
+    if args.start_label:
+        endpoints["start"]["name"] = args.start_label
+    if args.finish_label:
+        endpoints["finish"]["name"] = args.finish_label
 
     xs, ys = zip(*projected)
     extrema = {xs.index(min(xs)), xs.index(max(xs)), ys.index(min(ys)), ys.index(max(ys))}
@@ -462,13 +492,26 @@ def main() -> None:
             )
     start_x, start_y = canvas_all[0]
     finish_x, finish_y = canvas_all[-1]
+    endpoints["start"].update({"role": "start", "track_progress": 0.0, "anchor": {"x": start_x, "y": start_y}})
+    endpoints["finish"].update({"role": "finish", "track_progress": 1.0, "anchor": {"x": finish_x, "y": finish_y}})
+    if closed:
+        endpoint_svg = (
+            f'<circle cx="{start_x}" cy="{start_y}" r="12" fill="#2e7d32" stroke="#c62828" stroke-width="5"/>'
+            + endpoint_label_svg("start", f'{endpoints["start"]["name"]} / {endpoints["finish"]["name"]}', start_x, start_y, args.width).replace("起点：", "起点/终点：", 1)
+        )
+    else:
+        endpoint_svg = (
+            f'<circle cx="{start_x}" cy="{start_y}" r="11" fill="#2e7d32" stroke="#ffffff" stroke-width="3"/>'
+            f'<circle cx="{finish_x}" cy="{finish_y}" r="9" fill="#c62828" stroke="#ffffff" stroke-width="3"/>'
+            + endpoint_label_svg("start", endpoints["start"]["name"], start_x, start_y, args.width)
+            + endpoint_label_svg("finish", endpoints["finish"]["name"], finish_x, finish_y, args.width)
+        )
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {args.width} {args.height}" width="{args.width}" height="{args.height}" preserveAspectRatio="xMidYMid meet">
   <rect width="100%" height="100%" fill="#fffdf7"/>
   <path id="route-underlay" d="{route_path}" fill="none" stroke="#fffdf7" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
   {''.join(segment_svg) if segment_svg else f'<path id="route" d="{route_path}" fill="none" stroke="#d84315" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>'}
   {''.join(arrow_layers)}
-  <circle cx="{start_x}" cy="{start_y}" r="11" fill="#2e7d32" stroke="#ffffff" stroke-width="3"/>
-  <circle cx="{finish_x}" cy="{finish_y}" r="8" fill="#c62828" stroke="#ffffff" stroke-width="3"/>
+  {endpoint_svg}
   {''.join(boundary_svg)}
   {''.join(checkpoint_svg)}
   {''.join(legend_svg)}
@@ -488,6 +531,7 @@ def main() -> None:
         "simplified_points": [{"x": x, "y": y} for x, y in canvas_simplified],
         "simplified_progress": [round(cumulative[index] / cumulative[-1], 8) for index in simplified_indices],
         "svg_path_d": route_path,
+        "endpoints": endpoints,
         "checkpoints": checkpoints,
         "boundaries": boundaries,
         "segments": segments,
@@ -505,6 +549,8 @@ def main() -> None:
 - 原始轨迹点：{len(projected)}
 - 简化后折点：{len(simplified_indices)}
 - 路线类型：{route_type}
+- 起点：{endpoints["start"]["name"]}
+- 终点：{endpoints["finish"]["name"]}
 - 画布：{args.width}×{args.height}
 {segment_lines}
 

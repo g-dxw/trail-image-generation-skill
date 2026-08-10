@@ -1,23 +1,77 @@
 {
-  "default_model": "gpt-image-2",
-  "default_provider": "builtin",
+  "schema_version": 2,
+  "defaults": {
+    "landmark_prepaint_provider": "builtin",
+    "route_final_provider": "builtin"
+  },
   "providers": {
     "builtin": {
       "type": "current_session",
-      "model": "gpt-image-2"
+      "model": "tool-managed/unknown",
+      "allowed_purposes": [
+        "landmark_prepaint",
+        "route_final"
+      ],
+      "supports_reference_images": "unknown",
+      "max_reference_images": "unknown",
+      "supports_image_editing": "unknown",
+      "cost_class": "unknown",
+      "quality_class": "unknown",
+      "capability_source": "runtime_tool_schema"
     },
-    "my-relay": {
+    "draft-relay": {
+      "type": "relay",
+      "enabled": false,
+      "base_url": "https://relay.example.com/v1",
+      "api_format": "openai-images",
+      "model": "configured-draft-model",
+      "api_key_env": "TRAIL_DRAFT_RELAY_API_KEY",
+      "allowed_purposes": [
+        "landmark_prepaint"
+      ],
+      "supports_reference_images": true,
+      "max_reference_images": 1,
+      "supports_image_editing": true,
+      "supported_output_sizes": [
+        "512x512",
+        "1024x1024"
+      ],
+      "supported_quality_levels": [
+        "low"
+      ],
+      "preferred_output_size": "512x512",
+      "preferred_quality": "low",
+      "cost_class": "budget",
+      "quality_class": "draft",
+      "capability_source": "provider_documentation",
+      "supports_streaming": false,
+      "result_format": "base64",
+      "timeout_seconds": 180,
+      "max_retries": 1
+    },
+    "premium-relay": {
       "type": "relay",
       "enabled": false,
       "base_url": "https://relay.example.com/v1",
       "api_format": "openai-responses",
-      "model": "gpt-image-2",
-      "api_key_env": "TRAIL_IMAGE_RELAY_API_KEY",
+      "model": "configured-final-model",
+      "api_key_env": "TRAIL_FINAL_RELAY_API_KEY",
+      "allowed_purposes": [
+        "route_final"
+      ],
       "supports_reference_images": true,
-      "supports_image_editing": false,
+      "max_reference_images": 2,
+      "supports_image_editing": true,
+      "supported_quality_levels": [
+        "high"
+      ],
+      "preferred_quality": "high",
+      "cost_class": "premium",
+      "quality_class": "final",
+      "capability_source": "provider_documentation",
       "supports_streaming": true,
       "result_format": "base64",
-      "timeout_seconds": 180,
+      "timeout_seconds": 300,
       "max_retries": 1
     }
   }

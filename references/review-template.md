@@ -131,9 +131,50 @@ Choose exactly one primary photo per checkpoint. Add a supporting photo only whe
 
 Do not require scene attributes, function tags, supply fields, safety fields, full photo descriptions, or route-segment confirmation in the default stage. Record user-provided supply and safety facts directly for later prompt use.
 
+## 阶段二点五：地标简化规格与审核板
+
+Only enter this stage after `打卡点和标志性图片确认无误`. Skip it when there are no confirmed photos, the user chooses text-only landmarks, or the user requires original-photo pixels to be composited later.
+
+```markdown
+## 七点五、地标简化规格
+
+### 图像执行器能力发现
+
+在不发起生图请求的前提下，检查当前会话工具 schema 和本地 provider 配置，并记录能力报告路径。所有未明确暴露的能力写 `unknown`，不得从模型名称推断。
+
+| 执行角色 | 候选执行器 | 模型 | 参考图/编辑能力 | 尺寸/质量控制 | 价格/质量等级 | 能力来源 | 能力报告 |
+|---|---|---|---|---|---|---|---|
+| `landmark_prepaint` | `<名称/无>` | `<具体模型/tool-managed/unknown>` | `<明确值/unknown>` | `<明确值/unknown>` | `<明确值/unknown>` | `<tool schema/provider配置/文档/用户小样>` | `<JSON路径>` |
+| `route_final` | `<名称/稍后重新发现>` | `<具体模型/tool-managed/unknown>` | `<明确值/unknown>` | `<明确值/unknown>` | `<明确值/unknown>` | `<来源>` | `<JSON路径/稍后生成>` |
+
+| 编号 | 点位名称 | 主体裁切焦点 | 必须保留的特征 | 必须删除的内容 | 隐私处理 | 是否生成简化稿 |
+|---:|---|---|---|---|---|---|
+| 1 | `<名称>` | `<x=0.50,y=0.50>` | `<1—3项；注明需保留的牌匾/石刻/名称>` | `人物、广告、杂乱背景、点位编号、原图不存在的文字` | `<无/脱敏说明>` | `<是/否>` |
+
+地标简化稿规格：`优先请求provider已确认的较小方形尺寸和low/fast/draft档；原始尺寸如实记录；必要时另行生成默认512×512的拼板标准稿；主体居中、浅色纯净背景、锁定地标身份和画风骨架；不生成点位编号；原图中已确认的牌匾、石刻和名称允许参考保留`
+
+地标简化规格状态：`<confirmed/skipped_no_photos/skipped_text_only/skipped_original_pixel_composite/skipped_no_reference_tool>`
+
+地标简化稿状态：`<confirmed/not_generated/not_applicable>`
+
+预绘能力报告：`<JSON绝对路径/跳过原因>`
+
+预绘执行方式：`<已配置低成本执行器/能力未知但用户授权/先做一张选型小样/只生成提示词>`
+
+注意：能够生图不等于便宜或高质量；`unknown` 必须原样展示。选型小样、批量预绘和最终路线图分别授权。
+
+确认短语：`地标简化规格确认无误`（仅 `confirmed` 时有效）
+
+### 地标简化稿审核板
+
+每次只向中间生图模型上传一张已确认原图。生成后保留每张独立简化稿，并使用确定性脚本生成最多12格的编号审核板；超过12张时生成多张审核板。审核板不改变事实来源，不替代原始照片核对。
+
+如果简化稿和已确认特征一致，请回复：`地标简化稿确认无误`，并将“地标简化稿状态”更新为 `confirmed`。
+```
+
 ## 阶段四：图片生成计划与画面规格
 
-Only enter this stage after `打卡点和标志性图片确认无误` and after the final numbered route SVG has been generated. Append this stage to the existing review file; do not create a disconnected document.
+Only enter this stage after `打卡点和标志性图片确认无误`, after the final numbered route SVG has been generated, and—when AI-derived photo landmarks are used—after `地标简化稿确认无误`. Append this stage to the existing review file; do not create a disconnected document.
 
 This is a file-persistence gate, not a chat-only response. Before asking for confirmation:
 
@@ -148,7 +189,7 @@ If the review file is missing, reconstruct its confirmed earlier sections first.
 
 This is workflow stage 4. Before continuing, require explicit values for exactly these four core decisions:
 
-1. `画面风格`：写出可执行的风格描述，不能只写“好看”“高级”。
+1. `画面风格`：写出可执行的风格描述，不能只写“好看”“高级”。存在地标简化稿时必须原样沿用其已确认风格；改变风格会使相关简化稿和参考板失效。
 2. `生图数量`：默认 `1 张`；只有用户明确要求时才增加。
 3. `图中文字`：按图片逐张列出需要出现的全部文字，并区分模型生成、后期添加或无文字。确认内容必须在第 7 阶段逐项原样进入对应图片的提示词，不得只保留在核对单中。
 4. `轨迹精度`：默认 `精确轨迹/严格遵循轨迹`。只有用户明确要求时才可改为 `结构相似` 或 `氛围自由`；风格词和“直接生成完整效果图”都不构成降级授权。
@@ -171,9 +212,9 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 确认短语：`风格、数量、图中文字和轨迹精度确认无误`
 
-| 图片编号 | 图片名称 | 用途 | 图片类型 | 展示范围 | 画面比例 | 轨迹分段 | 包含点位 | 文字方式 |
-|---|---|---|---|---|---|---|---|---|
-| 图01 | `<名称>` | `<小红书封面/总览/详图等>` | `<路线总览图>` | `<完整路线>` | `<比例>` | `<0.0—1.0>` | `<全局编号及名称>` | `<模型生成/后期添加/无文字>` |
+| 图片编号 | 图片名称 | 用途 | 图片类型 | 展示范围 | 画面比例 | 轨迹分段 | 包含点位 | 文字方式 | 背景环境 | 地标连接方式 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 图01 | `<名称>` | `<小红书封面/总览/详图等>` | `<路线总览图>` | `<完整路线>` | `<比例>` | `<0.0—1.0>` | `<全局编号及名称>` | `<模型生成/后期添加/无文字>` | `<无/已确认地域远景>` | `<默认无连线/用户确认有连线>` |
 
 默认只规划图01，共 1 张。只有用户明确要求增加时，才加入路段详图、点位场景图或信息说明图。详图继续使用全局点位编号。
 
@@ -188,12 +229,18 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 | 用途与目标 | `<发布平台、阅读场景、用户一眼应理解什么>` |
 | 画面比例与尺寸 | `<比例和建议像素>` |
 | 构图层级 | `<前景、中景、背景和留白>` |
+| 背景环境 | `<无；或用户确认的具体视角，说明低对比与避让规则>` |
+| 地标连接方式 | `默认无引导连线；如用户明确要求则写清连线数量和一一对应规则` |
 | 轨迹范围 | `<完整路线或精确进度范围>` |
 | P0 几何 | `<路线类型、方向、起终点、分段、inset、点位锚点>` |
 | P1 内容 | `<地标、文字、信息卡、背景和装饰>` |
 | 包含点位 | `<全局编号、名称和视觉方式>` |
 | 图片文字 | `<逐条完整列出，或明确无文字/全部后期添加>` |
-| 参考图角色 | `<绝对路径和 route_geometry/real_photo/ai_scene/style_reference>` |
+| 实际上传参考图 | `<轨迹PNG；可选地标参考板PNG；最多两张>` |
+| 地标参考板编号映射 | `<参考板编号 → 全局点位编号、名称、必须保留特征>` |
+| 素材事实来源（不上传） | `<原始照片和单张简化稿路径；没有则写“无”>` |
+| 校验资产（不上传） | `<路线SVG、布局JSON、参考板sidecar>` |
+| 单图兼容分支 | `<provider仅支持1张图时只上传轨迹PNG，并使用已确认文字特征>` |
 | 安全与补给 | `<本图显示内容或明确不显示>` |
 | 负面约束 | `<禁止的路线、点位、文字和画面错误>` |
 | 验收条件 | `<轨迹、点位、文字、地标、构图和清晰度>` |
@@ -288,7 +335,11 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 | 视觉与比例 | `<风格、主色、画面比例、用途>` |
 | 路线几何 | `<SVG 文件、PNG 预览、布局 JSON、标注点数量、方向、分段颜色>` |
 | 轨迹精度与优先级 | `<精确轨迹/结构相似/氛围自由；P0 几何和 P1 视觉内容>` |
-| 参考图角色 | `<逐项列出 route_geometry/real_photo/ai_scene/style_reference>` |
+| 地标简化状态 | `<已确认并列出审核板/无照片跳过/文字模式跳过/原图后期合成>` |
+| 实际上传参考图 | `<route_geometry轨迹PNG；可选landmark_reference_board>` |
+| 地标参考板编号映射 | `<编号、点位名称和特征；没有则写“无”>` |
+| 素材事实来源（不上传） | `<原始照片和简化稿；没有则写“无”>` |
+| 校验资产（不上传） | `<SVG、布局 JSON、参考板 sidecar>` |
 | 地标与照片 | `<主图、AI 场景或原图框方式>` |
 | 文案信息 | `<标题、数据卡、图例、警告>` |
 | 补给与住宿 | `<已确认信息或无>` |
@@ -305,7 +356,7 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 ## 十五、执行方式
 
-进入执行方式前，必须先逐张完整展示最终生图提示词。不得只展示摘要、提示词片段或共享计划。请用户逐张核对轨迹约束、图片文字、地标、文案、构图、参考图角色、负面约束和验收条件。
+进入执行方式前，必须先逐张完整展示最终生图提示词。不得只展示摘要、提示词片段或共享计划。请用户逐张核对轨迹约束、图片文字、地标、文案、构图、实际上传参考图、参考板映射、不上传资产、负面约束和验收条件。
 
 提示词确认短语：`生图提示词确认无误`
 
@@ -320,11 +371,13 @@ This is workflow stage 4. Before continuing, require explicit values for exactly
 
 打卡点优先模式是可选的：当点位场景或主图存在不确定性时，最终授权后先生成小尺寸点位图供用户判断；用户确认后按已批准的图片任务生成详图。是否包含或跳过总览图必须在图片生成计划中明确，不得由 Agent 临时决定。
 
-提示词生成完成后，先选择图像提供方：
+提示词生成完成后，重新进行只读能力发现，再选择仅用于 `route_final` 的图像提供方：
 
-1. `使用当前会话生图`：默认请求 `gpt-image-2`。
+1. `使用当前会话生图`：工具未暴露模型、尺寸或质量时记录 `tool-managed/unknown`，不得声称使用特定模型或高质量档。
 2. `使用已配置中转站`：调用前显示地址、模型、格式和上传清单，并再次确认。
 3. `只保留提示词`：不调用生图工具。
+
+地标预绘执行器及其授权不得自动沿用到最终路线图。只有 provider 声明或用户通过结果确认适合终稿时才标记为 `final` 或 `user_approved_for_final`；否则写“质量档位未知”。
 
 选择提供方后，使用 `直接生成完整效果图`。该方式继承已确认的轨迹精度，不会自动降级。本 Skill 不用 SVG 后期确定性叠加修正轨迹；正式调用前必须生成并校验执行清单，确保轨迹 PNG 实际作为 `route_geometry` 参考图传入。
 

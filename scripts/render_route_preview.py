@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a dependency-free PNG preview from route_to_svg layout JSON."""
+"""Render a PNG preview from route_to_svg layout JSON, including start/finish labels."""
 
 from __future__ import annotations
 
@@ -23,6 +23,8 @@ DIGITS = {
     "7": ("111", "001", "010", "010", "010"),
     "8": ("111", "101", "111", "101", "111"),
     "9": ("111", "101", "111", "001", "111"),
+    "S": ("111", "100", "111", "001", "111"),
+    "F": ("111", "100", "110", "100", "100"),
 }
 
 
@@ -92,6 +94,72 @@ def write_png(path: Path, width: int, height: int, pixels: bytearray) -> None:
     path.write_bytes(payload)
 
 
+def endpoint_records(layout: dict, points: list[tuple[float, float]]) -> list[dict]:
+    configured = layout.get("endpoints") or {}
+    result = []
+    for role, default_name, anchor in (("start", "起点", points[0]), ("finish", "终点", points[-1])):
+        item = configured.get(role) if isinstance(configured.get(role), dict) else {}
+        configured_anchor = item.get("anchor") if isinstance(item.get("anchor"), dict) else {}
+        result.append(
+            {
+                "role": role,
+                "name": str(item.get("name") or default_name),
+                "anchor": {
+                    "x": float(configured_anchor.get("x", anchor[0])),
+                    "y": float(configured_anchor.get("y", anchor[1])),
+                },
+            }
+        )
+    return result
+
+
+def overlay_endpoint_names(image: bytearray, width: int, height: int, endpoints: list[dict], closed: bool) -> None:
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        return
+    font = None
+    for candidate in (
+        "/System/Library/Fonts/PingFang.ttc",
+        "/System/Library/Fonts/STHeiti Light.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "C:/Windows/Fonts/msyh.ttc",
+    ):
+        try:
+            font = ImageFont.truetype(candidate, 17)
+            break
+        except OSError:
+            continue
+    if font is None:
+        return
+    canvas = Image.frombytes("RGB", (width, height), bytes(image))
+    draw = ImageDraw.Draw(canvas)
+    records = endpoints[:1] if closed else endpoints
+    for endpoint in records:
+        role = endpoint["role"]
+        prefix = "起点/终点" if closed else ("起点" if role == "start" else "终点")
+        text_value = f"{prefix}：{endpoint['name']}"
+        x = round(float(endpoint["anchor"]["x"]))
+        y = round(float(endpoint["anchor"]["y"]))
+        bbox = draw.textbbox((0, 0), text_value, font=font, stroke_width=1)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        place_left = x >= width / 2
+        left = x - text_width - 34 if place_left else x + 24
+        left = max(6, min(width - text_width - 18, left))
+        top = max(6, min(height - text_height - 18, y - text_height - 18))
+        color = (46, 125, 50) if role == "start" else (198, 40, 40)
+        box = (left - 7, top - 5, left + text_width + 7, top + text_height + 7)
+        target_x = box[2] if place_left else box[0]
+        target_y = (box[1] + box[3]) // 2
+        draw.line((x, y, target_x, target_y), fill=(255, 255, 255), width=6)
+        draw.line((x, y, target_x, target_y), fill=color, width=2)
+        draw.rounded_rectangle(box, radius=7, fill=(255, 253, 247), outline=color, width=2)
+        draw.text((left, top), text_value, font=font, fill=color, stroke_width=1, stroke_fill=(255, 253, 247))
+    image[:] = canvas.tobytes()
+
+
 def checkpoint_badge_positions(checkpoints: list[dict], width: int, height: int) -> list[tuple[int, int]]:
     """Keep badges readable while retaining an explicit leader to the true anchor."""
     positions: list[tuple[int, int]] = []
@@ -141,6 +209,7 @@ def render(
         raise ValueError("layout JSON has no numbered checkpoints; rerun route_to_svg.py with --checkpoints-json")
     if width <= 0 or height <= 0 or width > 5000 or height > 5000:
         raise ValueError("invalid canvas dimensions")
+    endpoints = endpoint_records(layout, points)
 
     image = bytearray((255, 253, 247) * (width * height))
     segment_mode = progress_start > 0.0 or progress_end < 1.0
@@ -156,6 +225,24 @@ def render(
         draw_line(image, width, height, points[-1], points[0], 14, (255, 255, 255))
         closure_highlighted = progress_end == 1.0
         draw_line(image, width, height, points[-1], points[0], 9 if closure_highlighted else 6, (216, 67, 21) if closure_highlighted else (183, 170, 160))
+
+    start = endpoints[0]["anchor"]
+    finish = endpoints[1]["anchor"]
+    start_x, start_y = round(float(start["x"])), round(float(start["y"]))
+    finish_x, finish_y = round(float(finish["x"])), round(float(finish["y"]))
+    if layout.get("closed"):
+        draw_disk(image, width, height, start_x, start_y, 18, (255, 255, 255))
+        draw_disk(image, width, height, start_x, start_y, 15, (198, 40, 40))
+        draw_disk(image, width, height, start_x, start_y, 11, (46, 125, 50))
+        draw_number(image, width, height, "S", start_x, start_y, (255, 255, 255))
+    else:
+        for x, y, color, label in (
+            (start_x, start_y, (46, 125, 50), "S"),
+            (finish_x, finish_y, (198, 40, 40), "F"),
+        ):
+            draw_disk(image, width, height, x, y, 17, (255, 255, 255))
+            draw_disk(image, width, height, x, y, 14, color)
+            draw_number(image, width, height, label, x, y, (255, 255, 255))
 
     badge_positions = checkpoint_badge_positions(checkpoints, width, height)
     for checkpoint, (badge_x, badge_y) in zip(checkpoints, badge_positions):
@@ -175,6 +262,7 @@ def render(
         draw_disk(image, width, height, badge_x, badge_y, 11, (255, 255, 255))
         draw_number(image, width, height, checkpoint.get("number", ""), badge_x, badge_y, (105, 0, 0))
 
+    overlay_endpoint_names(image, width, height, endpoints, bool(layout.get("closed")))
     write_png(output_file, width, height, image)
     return output_file
 

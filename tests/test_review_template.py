@@ -64,6 +64,16 @@ class ReviewTemplateTests(unittest.TestCase):
         self.assertIn("原确认失效", self.default_content)
         self.assertIn("[TEXT_LOCK_BEGIN]", self.default_content)
 
+    def test_landmark_simplification_has_separate_gates(self):
+        self.assertIn("## 阶段二点五：地标简化规格与审核板", self.default_content)
+        self.assertIn("地标简化规格确认无误", self.default_content)
+        self.assertIn("地标简化稿确认无误", self.default_content)
+        self.assertIn("每次只向中间生图模型上传一张", self.default_content)
+        self.assertIn("实际上传参考图", self.default_content)
+        self.assertIn("素材事实来源（不上传）", self.default_content)
+        self.assertIn("校验资产（不上传）", self.default_content)
+        self.assertIn("单图兼容分支", self.default_content)
+
     def test_stage_four_is_a_persisted_document_gate(self):
         self.assertIn("## 阶段四：图片生成计划与画面规格", self.default_content)
         self.assertIn("same file", self.default_content)

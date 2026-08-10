@@ -49,13 +49,26 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("不根据模型名称自动判断强弱", content)
         self.assertIn("不默认执行任何一种生成方式", content)
 
-    def test_provider_selection_defaults_to_image2_without_secret_storage(self):
+    def test_provider_selection_is_runtime_discovered_without_secret_storage(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         example = (SKILL_DIR / "assets" / "provider-config.example.json").read_text(encoding="utf-8")
-        self.assertIn("gpt-image-2", content)
+        self.assertIn("tool-managed/unknown", content)
+        self.assertIn("build_image_capability_report.py", content)
+        self.assertIn("landmark_prepaint", content)
+        self.assertIn("route_final", content)
         self.assertIn("使用已配置中转站", content)
         self.assertIn('"api_key_env"', example)
         self.assertNotIn('"api_key"', example)
+
+    def test_readme_matches_runtime_workflow(self):
+        readme = (SKILL_DIR / "README.md").read_text(encoding="utf-8")
+        self.assertIn("--checkpoints-json", readme)
+        self.assertIn("build_image_capability_report.py", readme)
+        self.assertIn("normalize_landmark_draft.py", readme)
+        self.assertIn("--capability-report", readme)
+        self.assertIn("<路线名称>-路线核对单.md", readme)
+        self.assertNotIn("<路线名>-路线核对.md", readme)
+        self.assertIn("实际像素如实记录", readme)
 
     def test_stage_four_gate_is_mandatory(self):
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
@@ -79,9 +92,30 @@ class SkillStructureTests(unittest.TestCase):
         self.assertIn("[TEXT_LOCK_BEGIN]", rules)
         self.assertIn("验收清单：", rules)
 
+    def test_landmark_prepaint_and_two_image_contract(self):
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        rules = (SKILL_DIR / "references" / "prompt-rules.md").read_text(encoding="utf-8")
+        self.assertIn("地标简化规格确认无误", content)
+        self.assertIn("地标简化稿确认无误", content)
+        self.assertIn("landmark_reference_board", content)
+        self.assertIn("最终每个路线图任务最多上传两张图", content)
+        self.assertIn("[LANDMARK_SIMPLIFICATION_LOCK_BEGIN]", rules)
+        self.assertIn("实际上传参考图：", rules)
+        self.assertIn("素材事实来源（不上传）：", rules)
+        self.assertIn("点位完整性：", rules)
+        self.assertIn("点位对应：", rules)
+        self.assertIn("地标连接方式：", rules)
+        self.assertIn("Do not draw connector lines by default", rules)
+        self.assertIn("must still list every confirmed string verbatim", rules)
+        self.assertIn("Clean route-map composition default", rules)
+        self.assertIn("low contrast and atmospheric perspective", rules)
+
     def test_route_svg_avoids_backslash_inside_fstring_expression(self):
         source = (SKILL_DIR / "scripts" / "route_to_svg.py").read_text(encoding="utf-8")
         self.assertNotIn("{''.join(f'", source)
+        self.assertIn("--start-label", source)
+        self.assertIn("--finish-label", source)
+        self.assertIn('"endpoints": endpoints', source)
 
 
 if __name__ == "__main__":

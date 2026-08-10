@@ -11,7 +11,7 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
 
-from render_route_preview import render  # noqa: E402
+from render_route_preview import endpoint_records, render  # noqa: E402
 
 
 class RoutePreviewTests(unittest.TestCase):
@@ -57,6 +57,20 @@ class RoutePreviewTests(unittest.TestCase):
             layout, output = self.write_layout(folder, checkpoints)
             render(layout, output, progress_start=0.6, progress_end=0.8)
             self.assertEqual(output.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
+
+    def test_endpoint_names_are_loaded_from_layout(self):
+        points = [(20.0, 20.0), (100.0, 140.0)]
+        records = endpoint_records(
+            {
+                "endpoints": {
+                    "start": {"name": "起点站", "anchor": {"x": 20, "y": 20}},
+                    "finish": {"name": "终点站", "anchor": {"x": 100, "y": 140}},
+                }
+            },
+            points,
+        )
+        self.assertEqual([item["name"] for item in records], ["起点站", "终点站"])
+        self.assertEqual([item["role"] for item in records], ["start", "finish"])
 
 
 if __name__ == "__main__":
